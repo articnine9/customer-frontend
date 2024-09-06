@@ -7,6 +7,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import MenuNavbar from '../CustomerPageNavbar/navBar';
 import { SiTicktick } from "react-icons/si";
+import Footer from '../../CustomerPageFooter/footer';
 
 // Set the app element for accessibility
 Modal.setAppElement('#root');
@@ -190,6 +191,7 @@ const AddToCart = () => {
                     <button style={{ ...modalButton, backgroundColor: 'grey', width: '100%' }} onClick={handlePayBill}>Pay Bill</button>
                 </div>
             </Modal>
+           
         </>
     );
 };

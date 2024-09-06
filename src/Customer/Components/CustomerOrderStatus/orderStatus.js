@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './orderStatus.css'; // Ensure this file includes the necessary CSS
+import MenuNavbar from '../CustomerPageNavbar/navBar';
+import Footer from '../../CustomerPageFooter/footer';
 
 const OrderStatus = () => {
   const [currentTableOrders, setCurrentTableOrders] = useState([]);
@@ -60,6 +62,7 @@ const OrderStatus = () => {
 
   return (
     <>
+    <MenuNavbar/>
       <h1>Order Status</h1>
       <div className="container">
         {currentTableOrders.length > 0 ? (
@@ -86,6 +89,7 @@ const OrderStatus = () => {
           <p>No orders for the current table</p>
         )}
       </div>
+      <Footer/>
     </>
   );
 };

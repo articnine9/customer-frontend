@@ -21,12 +21,7 @@ const MenuNavbar = () => {
   // Function to handle modal close
   const handleClose = () => setShowModal(false);
 
-  const handleOrderStatus = () => {
-    navigate('/orderStatus');
- };
- const handlePayBill = () => {
-  navigate('/payment');
-};
+ 
 
   return (
     <>
@@ -39,16 +34,7 @@ const MenuNavbar = () => {
               <Button variant="outline-primary" onClick={handleShow}>
                 Login
               </Button>
-              <Button variant="outline-primary" onClick={handleOrderStatus}>
-                 Check Order Status
-              </Button>
-              <Button variant="outline-primary" onClick={handlePayBill}>
-                 Pay Bill
-              </Button>
-
-              
-           
-            </Nav>
+             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>

@@ -8,6 +8,7 @@
     width: 100%;
     max-width: 100%;
     position: relative;
+  
   }
   
   /* Food images in the carousel */
@@ -524,9 +525,6 @@
   font-family:monospace;
   color: #333;
 }
-
-
-
 
 
 

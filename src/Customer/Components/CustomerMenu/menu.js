@@ -4,19 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import { Carousel, Card, Row, Col, Dropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './menu.css'; // Ensure this file includes the blur effect styles
-import { 
-    setImageUrls, 
+import {
+    setImageUrls,
     setSelectedTable,
-    setCategoryImages, 
-    setFoodItemImages, 
-    setUpdatedItems, 
-    setLoading 
+    setCategoryImages,
+    setFoodItemImages,
+    setUpdatedItems,
+    setLoading
 } from '../../../SlicesFolder/Slices/menuSlice';
 import MenuNavbar from '../CustomerPageNavbar/navBar';
 import axios from 'axios';
 import CategoryListing from '../CategoryListingPage/categoryListing';
 import { setSelectedCategory } from '../../../SlicesFolder/Slices/selectedCategorySlice';
 import { FaSearch } from "react-icons/fa";
+import Footer from '../../CustomerPageFooter/footer';
+import { PiShoppingCartFill } from "react-icons/pi";
 
 // Loader Component
 const Loader = () => (
@@ -95,10 +97,10 @@ const Menu = () => {
   const [showTablePopup, setShowTablePopup] = useState(!selectedTable);
   const [selectedType, setSelectedType] = useState(null); // New state for type filter
   const selectedCategory = useSelector(state => state.selectedCategory);
-
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredFoodItems, setFilteredFoodItems] = useState(foodItemImages);
-
+  const [isFixed, setIsFixed] = useState(false);
 
   useEffect(() => {
     if (!isTableSelected) {
@@ -178,6 +180,20 @@ const Menu = () => {
     setFilteredFoodItems(filtered);
   }, [searchTerm, foodItemImages]);
 
+  useEffect(() => {
+    // Handle scroll event to toggle fixed position
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsFixed(true);
+      } else {
+        setIsFixed(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleCountChange = (itemName, delta) => {
     const newItems = updatedItems.map(item =>
       item.name === itemName
@@ -217,246 +233,260 @@ const Menu = () => {
     (selectedType ? item.type === selectedType : true)
   );
 
-  
-
   return (
     <>
-      <MenuNavbar />
-      {showTablePopup && <TableSelectionPopup onClose={() => setShowTablePopup(false)} onTableSelect={handleTableSelect} />}
-      
-      {loading ? (
-        <Loader />
+      {!isTableSelected ? (
+        <TableSelectionPopup onClose={() => setShowTablePopup(false)} onTableSelect={handleTableSelect} />
       ) : (
         <>
-          {/* Banner Section */}
-          <div className="carousel-container">
-            {imageUrls.length > 0 ? (
-              <Carousel interval={3000} controls={false} indicators={false} pause={false}>
-                {imageUrls.map((image, index) => (
-                  <Carousel.Item key={index}>
-                    <img
-                      src={image}
-                      className="d-block w-100 food-image"
-                      alt={`Food ${index + 1}`}
-                    />
-                  </Carousel.Item>
-                ))}
-              </Carousel>
+          <MenuNavbar />
+
+          {/* Ensure top padding to prevent overlap with fixed navbar */}
+          <div style={{ paddingTop: '2px' }}>
+            {loading ? (
+              <Loader />
             ) : (
-              <p>No banner images available</p>
+              <>
+                {/* Banner Section */}
+                <div className="carousel-container">
+                  {imageUrls.length > 0 ? (
+                    <Carousel interval={3000} controls={false} indicators={false} pause={false}>
+                      {imageUrls.map((image, index) => (
+                        <Carousel.Item key={index}>
+                          <img
+                            src={image}
+                            className="d-block w-100 food-image"
+                            alt={`Food ${index + 1}`}
+                          />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <p>No banner images available</p>
+                  )}
+                </div>
+              
+
+                {/* Search Bar */}
+                <div 
+                  style={{
+                    position: isFixed ? 'fixed' : 'relative',
+                    top: isFixed ? '0px' : 'auto',
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    backgroundColor: '#F5F5F5',
+                    borderBottom: '1px solid #ddd',
+                    boxShadow: isFixed ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
+                    transition: 'box-shadow 0.3s, background-color 0.3s'
+                  }}
+                >
+                  <div 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      border: '1px solid #ddd', // Updated border color to a lighter shade
+                      borderRadius: '5px',
+                      padding: '5px 10px',
+                      width: '100%',
+                      maxWidth: '400px',
+                      margin: 'auto',
+                      backgroundColor: '#fff' // Changed to white for better visibility
+                    }}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{
+                        border: 'none',
+                        outline: 'none',
+                        flex: 1,
+                        padding: '5px',
+                        fontSize: '16px',
+                        backgroundColor: 'transparent' // Ensure the background of input is transparent
+                      }}
+                    />
+                    <button
+                      type="button"
+                      style={{
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        fontSize: '20px',
+                        color: '#007bff'
+                      }}
+                    >
+                      <FaSearch />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Categories Display Section */}
+                <CategoryListing/>
+                <br/>
+
+                {/* Filter Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '10px' }}>
+                  <button 
+                    style={{
+                      backgroundColor: 'green', 
+                      color: 'white', 
+                      border: 'none', 
+                      padding: '10px 20px', 
+                      borderRadius: '5px', 
+                      margin: '5px', 
+                      width: '100%', 
+                      maxWidth: '200px', 
+                      cursor: 'pointer', 
+                      fontSize: '16px'
+                    }}
+                    onClick={() => handleTypeSelect('Veg')}
+                  >
+                    Veg
+                  </button>
+                  <button 
+                    style={{
+                      backgroundColor: 'maroon', 
+                      color: 'white', 
+                      border: 'none', 
+                      padding: '10px 20px', 
+                      borderRadius: '5px', 
+                      margin: '5px', 
+                      width: '100%', 
+                      maxWidth: '200px', 
+                      cursor: 'pointer', 
+                      fontSize: '16px'
+                    }}
+                    onClick={() => handleTypeSelect('Non Veg')}
+                  >
+                    Non Veg
+                  </button>
+                </div>
+                <br/>
+
+                {/* Food items Section */}
+                <div className="food-items-container">
+                  <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+                    {filteredFoodItemsByCategory.map((item, index) => (
+                      <Col key={index} className="d-flex align-items-stretch">
+                        <Card className={`food-item-card ${item.availability !== 'available' ? 'blur' : ''}`}>
+                          <div className="card-content">
+                            <div className="content-left">
+                              <div className="item-details">
+                                <h3>{item.type === "Veg" ? <>🟢 Veg</> : <>🔴 Non Veg</> }</h3>
+                                <h3>{item.typeName}</h3>
+                                <h4>Price: {item.typePrice}</h4>
+                                <div className="additional-content"></div>
+                              </div>
+                              {item.availability === 'available' && updatedItems.find(i => i.name === item.typeName)?.count > 0 ? (
+                                <div className="counter">
+                                  <button 
+                                    className="button" 
+                                    onClick={() => handleCountChange(item.typeName, -1)}
+                                  >
+                                    -
+                                  </button>
+                                  <span className="count">
+                                    {updatedItems.find(i => i.name === item.typeName)?.count}
+                                  </span>
+                                  <button 
+                                    className="button" 
+                                    onClick={() => handleCountChange(item.typeName, 1)}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              ) : item.availability === 'available' ? (
+                                <button 
+                                  className="add-button" 
+                                  onClick={() => handleCountChange(item.typeName, 1)}
+                                >
+                                  Add
+                                </button>
+                              ) : (
+                                <button 
+                                  className="add-button" 
+                                  disabled
+                                >
+                                  Unavailable
+                                </button>
+                              )}
+                            </div>
+                            <div className="content-right">
+                              <img 
+                                src={item.typeImageUrl} 
+                                alt={item.typeName} 
+                                className="right-image" 
+                              />
+                            </div>
+                          </div>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+                <br/>
+                <br/>
+              
+
+
+                {/* Bottom Navbar */}
+                {showBottomNavbar && (
+                  <div style={bottomNavbarStyles.container}>
+                    <div style={bottomNavbarStyles.left}>
+                      <span>{orderedFood.length} Items added</span>
+                    </div>
+                    <div style={bottomNavbarStyles.right}>
+                      <button 
+                        style={bottomNavbarStyles.button} 
+                        onClick={handleAddToCart}
+                        disabled={!orderedFood.length}
+                      >
+                        Cart <PiShoppingCartFill />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Sticky Dropdown Button */}
+                <div style={dropdownStyles.container}>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn btn-primary'>
+                      Menu 🥗
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item onClick={() => handleCategorySelect("All")}>
+                        All
+                      </Dropdown.Item>
+                      {categoryImages.map(category => (
+                        <Dropdown.Item 
+                          key={category.categoryId}
+                          onClick={() => handleCategorySelect(category.categoryName)}
+                        >
+                          {category.categoryName}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </>
             )}
           </div>
-
-          <br/>
-
-          {/* Search Bar */}
-          <div 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              border: '1px solid #ddd',
-              borderRadius: '5px',
-              padding: '5px 10px',
-              width: '100%',
-              maxWidth: '400px',
-              backgroundColor: '#f9f9f9',
-              boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                border: 'none',
-                outline: 'none',
-                flex: 1,
-                padding: '5px',
-                fontSize: '16px',
-              }}
-              
-            />
-            <button
-              type="button"
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '5px',
-                fontSize: '20px',
-                color: '#007bff'
-              }}
-            >
-             <FaSearch />
-            </button>
-          </div>
-
-          <br/>
-          
-          {/* Categories Display Section */}
-          <CategoryListing/>
-          <br/>
-
-          {/* Filter Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '10px' }}>
-            <button 
-              style={{
-                backgroundColor: 'green', 
-                color: 'white', 
-                border: 'none', 
-                padding: '10px 20px', 
-                borderRadius: '5px', 
-                margin: '5px', 
-                width: '100%', 
-                maxWidth: '200px', 
-                cursor: 'pointer', 
-                fontSize: '16px'
-              }}
-              onClick={() => handleTypeSelect('Veg')}
-            >
-              Veg
-            </button>
-            <button 
-              style={{
-                backgroundColor: 'maroon', 
-                color: 'white', 
-                border: 'none', 
-                padding: '10px 20px', 
-                borderRadius: '5px', 
-                margin: '5px', 
-                width: '100%', 
-                maxWidth: '200px', 
-                cursor: 'pointer', 
-                fontSize: '16px'
-              }}
-              onClick={() => handleTypeSelect('Non Veg')}
-            >
-              Non Veg
-            </button>
-          </div>
-          <br/>
-
-          {/* Food items Section */}
-          {isTableSelected ? (
-            <div className="food-items-container">
-              <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-                {filteredFoodItemsByCategory.map((item, index) => (
-                  <Col key={index} className="d-flex align-items-stretch">
-                    <Card className={`food-item-card ${item.availability !== 'available' ? 'blur' : ''}`}>
-                      <div className="card-content">
-                        <div className="content-left">
-                          <div className="item-details">
-                            <h3>{item.type === "Veg" ? <>🟢 Veg</> : <>🔴 Non Veg</> }</h3>
-                            <h3>{item.typeName}</h3>
-                            <h4>Price: {item.typePrice}</h4>
-                            <div className="additional-content"></div>
-                          </div>
-                          {item.availability === 'available' && updatedItems.find(i => i.name === item.typeName)?.count > 0 ? (
-                            <div className="counter">
-                              <button 
-                                className="button" 
-                                onClick={() => handleCountChange(item.typeName, -1)}
-                              >
-                                -
-                              </button>
-                              <span className="count">
-                                {updatedItems.find(i => i.name === item.typeName)?.count}
-                              </span>
-                              <button 
-                                className="button" 
-                                onClick={() => handleCountChange(item.typeName, 1)}
-                              >
-                                +
-                              </button>
-                            </div>
-                          ) : item.availability === 'available' ? (
-                            <button 
-                              className="add-button" 
-                              onClick={() => handleCountChange(item.typeName, 1)}
-                            >
-                              Add
-                            </button>
-                          ) : (
-                            <button 
-                              className="add-button" 
-                              disabled
-                            >
-                              Unavailable
-                            </button>
-                          )}
-                        </div>
-                        <div className="content-right">
-                          <img 
-                            src={item.typeImageUrl} 
-                            alt={item.typeName} 
-                            className="right-image" 
-                          />
-                        </div>
-                      </div>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          ) : (
-            <p>Please select a table to view the menu.</p>
-          )}
-
-          {/* Bottom Navbar */}
-          {showBottomNavbar && (
-            <div style={bottomNavbarStyles.container}>
-              <div style={bottomNavbarStyles.left}>
-                <span>{orderedFood.length} Items added</span>
-              </div>
-              <div style={bottomNavbarStyles.right}>
-                <button 
-                  style={bottomNavbarStyles.button} 
-                  onClick={handleAddToCart}
-                  disabled={!orderedFood.length}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Sticky Dropdown Button */}
-          {isTableSelected && (
-            <div style={dropdownStyles.container}>
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn btn-primary'>
-                  Menu 🥗
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => handleCategorySelect("All")}>
-                    All
-                  </Dropdown.Item>
-                  {categoryImages.map(category => (
-                    <Dropdown.Item 
-                      key={category.categoryId}
-                      onClick={() => handleCategorySelect(category.categoryName)}
-                    >
-                      {category.categoryName}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          )}
         </>
       )}
+      {isTableSelected && <Footer />}
     </>
   );
 };
 
-
-
 const bottomNavbarStyles = {
   container: {
     position: 'fixed',
-    bottom: 0,
+    bottom: "60px",
     width: '100%',
     backgroundColor: '#fff',
     borderTop: '1px solid #ddd',
@@ -488,7 +518,7 @@ const bottomNavbarStyles = {
 const dropdownStyles = {
   container: {
     position: 'fixed',
-    bottom: '10%',
+    bottom: '20%',
     right: '10%',
     zIndex: 1100,
   },

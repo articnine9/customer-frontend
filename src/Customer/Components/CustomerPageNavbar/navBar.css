@@ -24,7 +24,7 @@
 }
 
 .custom-modal .modal-header {
-    margin-bottom: 10px; /* Space below header */
+    margin-bottom: 0px; /* Space below header */
 }
 
 .custom-modal .modal-footer {
