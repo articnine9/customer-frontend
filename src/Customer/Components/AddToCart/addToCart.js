@@ -79,8 +79,6 @@ const AddToCart = () => {
             })),
         };
 
-        console.log("cartData",cartData);
-        
 
         try {
             await axios.post('https://qr-backend-application.onrender.com/cart/cartitems', cartData);

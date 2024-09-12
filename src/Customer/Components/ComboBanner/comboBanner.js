@@ -41,7 +41,7 @@ const ComboBanner = () => {
   }, []);
 
   const handleShowOffcanvas = (combo) => {
-    console.log("Show Offcanvas:", combo);
+    
     setSelectedCombo({ ...combo });
     setShowOffcanvas(true);
   };
