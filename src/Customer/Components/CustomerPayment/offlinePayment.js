@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +19,12 @@ const OfflinePayment = () => {
       try {
         const response = await axios.get("https://qr-backend-application.onrender.com/cart/items");
         const cartItems = response.data;
-        
+       
+
+        // Extract items and combos from the cart items
         const itemsForTable = cartItems
           .filter(item => item.tableNumber === currentTableNumber)
-          .flatMap(item => item.items);
+          .flatMap(item => [...item.items, ...item.combos]);
 
         const aggregated = itemsForTable.reduce((acc, item) => {
           const existingItem = acc.find(i => i.name === item.name);
@@ -33,7 +34,7 @@ const OfflinePayment = () => {
           } else {
             acc.push({
               ...item,
-              price: Number(item.price), 
+              price: Number(item.price),
               total: Number(item.price) * item.count,
             });
           }
@@ -41,6 +42,7 @@ const OfflinePayment = () => {
         }, []);
 
         setAggregatedItems(aggregated);
+      
 
         const total = aggregated.reduce((total, item) => total + item.total, 0);
         setTotalPrice(total);
@@ -94,4 +96,3 @@ const OfflinePayment = () => {
 };
 
 export default OfflinePayment;
-

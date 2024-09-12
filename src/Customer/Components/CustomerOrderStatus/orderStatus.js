@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './orderStatus.css'; // Ensure this file includes the necessary CSS
 import MenuNavbar from '../CustomerPageNavbar/navBar';
-import Footer from '../../CustomerPageFooter/footer';
+import Footer from '../CustomerPageFooter/footer'; // Use the correct path to your Footer component
 
 const OrderStatus = () => {
   const [currentTableOrders, setCurrentTableOrders] = useState([]);
@@ -19,24 +19,22 @@ const OrderStatus = () => {
         const response = await axios.get('https://qr-backend-application.onrender.com/cart/items');
         const cartItems = response.data;
 
-        console.log('cartItems',cartItems);
-        
+       
 
         if (cartItems.length > 0 && currentTableNumber) {
-          // Filter cart items based on currentTableNumber
+          // Filter cart items by the current table number
           const filteredItems = cartItems.filter(item => item.tableNumber === parseInt(currentTableNumber));
+          
+          // Combine both items and combos
+          const itemsFromFiltered = filteredItems.flatMap(item => [...item.items, ...item.combos]);
 
-          // Extract items from each filtered item
-          const itemsFromFiltered = filteredItems.flatMap(item => item.items);
-
-          // Set the state for current table orders if needed
+          // Set orders and items
           if (filteredItems.length > 0) {
             setCurrentTableOrders(filteredItems[0].items);
           } else {
             setCurrentTableOrders([]);
           }
 
-          // Store the extracted items in state
           setAllItemsFromFiltered(itemsFromFiltered);
         } else {
           setCurrentTableOrders([]);
@@ -62,7 +60,7 @@ const OrderStatus = () => {
 
   return (
     <>
-    <MenuNavbar/>
+      <MenuNavbar />
       <h1>Order Status</h1>
       <div className="container">
         {currentTableOrders.length > 0 ? (
@@ -71,7 +69,7 @@ const OrderStatus = () => {
               allItemsFromFiltered.map((foodItem, index) => (
                 <div key={index} className="col-md-4 mb-4">
                   <div 
-                    className={`card ${foodItem.status === 'finished' ? 'bg-success text-light' : 'bg-danger text-light'}`}
+                    className={`card ${foodItem.status === 'served' ? 'bg-success text-light' : 'bg-danger text-light'}`}
                   >
                     <div className="card-body">
                       <h5 className="card-title">{foodItem.name}</h5>
@@ -89,10 +87,9 @@ const OrderStatus = () => {
           <p>No orders for the current table</p>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
 
 export default OrderStatus;
-

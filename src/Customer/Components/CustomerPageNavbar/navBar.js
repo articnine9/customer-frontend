@@ -8,11 +8,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from '../CustomerLogin/login'; // Import the Login component
 import './navBar.css';
 // import PhoneNumberLogin from '../PhoneNumberLogin/phoneNumberLogin';
-import { useNavigate } from 'react-router-dom';
+
 
 const MenuNavbar = () => {
 
-  const navigate = useNavigate()
+
   const [showModal, setShowModal] = useState(false);
 
   // Function to handle modal show

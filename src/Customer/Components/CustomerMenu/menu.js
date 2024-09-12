@@ -17,8 +17,9 @@ import axios from 'axios';
 import CategoryListing from '../CategoryListingPage/categoryListing';
 import { setSelectedCategory } from '../../../SlicesFolder/Slices/selectedCategorySlice';
 import { FaSearch } from "react-icons/fa";
-import Footer from '../../CustomerPageFooter/footer';
 import { PiShoppingCartFill } from "react-icons/pi";
+import Footer from '../CustomerPageFooter/footer';
+import ComboBanner from '../ComboBanner/comboBanner';
 
 // Loader Component
 const Loader = () => (
@@ -94,7 +95,6 @@ const Menu = () => {
   } = useSelector(state => state.menu);
 
   const [isTableSelected, setIsTableSelected] = useState(!!selectedTable);
-  const [showTablePopup, setShowTablePopup] = useState(!selectedTable);
   const [selectedType, setSelectedType] = useState(null); // New state for type filter
   const selectedCategory = useSelector(state => state.selectedCategory);
   
@@ -104,7 +104,7 @@ const Menu = () => {
 
   useEffect(() => {
     if (!isTableSelected) {
-      setShowTablePopup(true);
+      setIsTableSelected(false);
     }
   }, [isTableSelected]);
 
@@ -236,7 +236,7 @@ const Menu = () => {
   return (
     <>
       {!isTableSelected ? (
-        <TableSelectionPopup onClose={() => setShowTablePopup(false)} onTableSelect={handleTableSelect} />
+        <TableSelectionPopup onClose={() => setIsTableSelected(true)} onTableSelect={handleTableSelect} />
       ) : (
         <>
           <MenuNavbar />
@@ -265,7 +265,6 @@ const Menu = () => {
                     <p>No banner images available</p>
                   )}
                 </div>
-              
 
                 {/* Search Bar */}
                 <div 
@@ -325,8 +324,7 @@ const Menu = () => {
                 </div>
 
                 {/* Categories Display Section */}
-                <CategoryListing/>
-                <br/>
+                <CategoryListing />
 
                 {/* Filter Buttons */}
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '10px' }}>
@@ -365,6 +363,11 @@ const Menu = () => {
                     Non Veg
                   </button>
                 </div>
+                <br/>
+
+                {/*Combo Banner Section */}
+                <ComboBanner />
+
                 <br/>
 
                 {/* Food items Section */}
@@ -430,8 +433,6 @@ const Menu = () => {
                 </div>
                 <br/>
                 <br/>
-              
-
 
                 {/* Bottom Navbar */}
                 {showBottomNavbar && (

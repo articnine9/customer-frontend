@@ -21,7 +21,7 @@
 /* Individual items within the scroll content */
 .item {
     flex: 0 0 auto;
-    width: 200px; /* Adjust item width as needed */
+    width: 120px; /* Adjust item width as needed */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,8 +42,8 @@
 
 /* Image styling */
 .category-image {
-    width: 130px;
-    height: 130px;
+    width: 80px;
+    height: 80px;
     object-fit: cover; /* Maintain aspect ratio and cover the area */
     border-radius: 50%; /* Rounded corners for images */
     margin-bottom: 10px; /* Space between image and text */
@@ -51,7 +51,7 @@
 
 /* Text below the image */
 .category-name {
-    font-size: 18px;
+    font-size: 13px;
     font-weight: bold;
     text-align: center;
     color: #333; /* Dark text color */

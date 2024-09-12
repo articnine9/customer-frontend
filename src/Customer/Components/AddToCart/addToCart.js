@@ -7,7 +7,6 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import MenuNavbar from '../CustomerPageNavbar/navBar';
 import { SiTicktick } from "react-icons/si";
-import Footer from '../../CustomerPageFooter/footer';
 
 // Set the app element for accessibility
 Modal.setAppElement('#root');
@@ -49,27 +48,40 @@ const AddToCart = () => {
             return;
         }
 
+        // Separate items and combos
         const newItems = orderedFood.filter(item => item.count > 0 && !postedItems.includes(item.name));
 
-        if (newItems.length === 0) {
-            alert("No new items to add. Please add new items before proceeding.");
+        const items = newItems.filter(item => item.categoryName !== "combo");
+        const combos = newItems.filter(item => item.categoryName === "combo");
+
+        if (items.length === 0 && combos.length === 0) {
+            alert("No new items or combos to add. Please add new items before proceeding.");
             return;
         }
 
         const cartData = {
             tableNumber: Number(selectedTable),
-            items: newItems.map(item => ({
+            items: items.map(item => ({
                 _id: item.typeId,
                 name: item.name,
                 type: item.type,
                 count: Number(item.count),
                 price: Number(item.price),
                 categoryName: item.categoryName,
-                status: "not finished"
-            }))
+            })),
+            combos: combos.map(item => ({
+                _id: item.typeId,
+                name: item.name,
+                type: item.type,
+                count: Number(item.count),
+                price: Number(item.price),
+                categoryName: item.categoryName,
+            })),
         };
-        console.log('[cartData', cartData);
+
+        console.log("cartData",cartData);
         
+
         try {
             await axios.post('https://qr-backend-application.onrender.com/cart/cartitems', cartData);
             setModalIsOpen(true); // Open modal after successful order
@@ -85,7 +97,7 @@ const AddToCart = () => {
 
     const handleOrderMore = () => {
         handleCloseModal();
-        navigate('/customerPage');
+        navigate('/');
     };
 
     const handleOrderStatus = () => {
@@ -191,7 +203,6 @@ const AddToCart = () => {
                     <button style={{ ...modalButton, backgroundColor: 'grey', width: '100%' }} onClick={handlePayBill}>Pay Bill</button>
                 </div>
             </Modal>
-           
         </>
     );
 };
