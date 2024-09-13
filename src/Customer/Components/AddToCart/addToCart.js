@@ -76,10 +76,13 @@ const AddToCart = () => {
                 count: Number(item.count),
                 price: Number(item.price),
                 categoryName: item.categoryName,
+                items:item.items
+               
             })),
         };
 
-
+        
+     
         try {
             await axios.post('https://qr-backend-application.onrender.com/cart/cartitems', cartData);
             setModalIsOpen(true); // Open modal after successful order
