@@ -1,11 +1,14 @@
 .bg-success {
-    background-color: #28a745 !important; /* Green */
+  background-color: #2f6b2a !important; /* Green */
+  color: #fff !important;
+
 }
 
 .bg-danger {
-    background-color: #dc3545 !important; /* Red */
+  background-color: #792325 !important; /* Red */
+  color: #fff !important;
 }
 
 .text-light {
-    color: #f8f9fa !important; /* Light text color for contrast */
+  color: #f8f9fa !important; /* Light text color for contrast */
 }

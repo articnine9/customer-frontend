@@ -69,12 +69,12 @@ const OrderStatus = () => {
               allItemsFromFiltered.map((foodItem, index) => (
                 <div key={index} className="col-md-4 mb-4">
                   <div 
-                    className={`card ${foodItem.status === 'served' ? 'bg-success text-light' : 'bg-danger text-light'}`}
+                    className={`card ${foodItem.status === 'Served' ? 'bg-success text-light' : 'bg-danger text-light'}`}
                   >
                     <div className="card-body">
                       <h5 className="card-title">{foodItem.name}</h5>
-                      <p className="card-text"><strong>Count:</strong> {foodItem.count}</p>
-                      <p className="card-text"><strong>Status:</strong> {foodItem.status}</p>
+                      <p className="card-text text-light" ><strong>Count:</strong> {foodItem.count}</p>
+                      <p className="card-text text-light"><strong>Status:</strong> {foodItem.status}</p>
                     </div>
                   </div>
                 </div>

@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Carousel, Card, Row, Col, Dropdown } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './menu.css'; // Ensure this file includes the blur effect styles
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Carousel, Card, Row, Col, Dropdown } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./menu.css"; // Ensure this file includes the blur effect styles
 import {
-    setImageUrls,
-    setSelectedTable,
-    setCategoryImages,
-    setFoodItemImages,
-    setUpdatedItems,
-    setLoading
-} from '../../../SlicesFolder/Slices/menuSlice';
-import MenuNavbar from '../CustomerPageNavbar/navBar';
-import axios from 'axios';
-import CategoryListing from '../CategoryListingPage/categoryListing';
-import { setSelectedCategory } from '../../../SlicesFolder/Slices/selectedCategorySlice';
+  setImageUrls,
+  setSelectedTable,
+  setCategoryImages,
+  setFoodItemImages,
+  setUpdatedItems,
+  setLoading,
+} from "../../../SlicesFolder/Slices/menuSlice";
+import MenuNavbar from "../CustomerPageNavbar/navBar";
+import axios from "axios";
+import CategoryListing from "../CategoryListingPage/categoryListing";
+import { setSelectedCategory } from "../../../SlicesFolder/Slices/selectedCategorySlice";
 import { FaSearch } from "react-icons/fa";
 import { PiShoppingCartFill } from "react-icons/pi";
-import Footer from '../CustomerPageFooter/footer';
-import ComboBanner from '../ComboBanner/comboBanner';
+import Footer from "../CustomerPageFooter/footer";
+import ComboBanner from "../ComboBanner/comboBanner";
 
 // Loader Component
 const Loader = () => (
@@ -42,8 +42,10 @@ const TableSelectionPopup = ({ onClose, onTableSelect }) => {
         <h2>Select Table Number</h2>
         <select onChange={handleTableSelect} style={popupStyles.select}>
           <option value="">Select Table</option>
-          {[...Array(10).keys()].map(i => (
-            <option key={i} value={i + 1}>Table {i + 1}</option>
+          {[...Array(10).keys()].map((i) => (
+            <option key={i} value={i + 1}>
+              Table {i + 1}
+            </option>
           ))}
         </select>
       </div>
@@ -53,30 +55,30 @@ const TableSelectionPopup = ({ onClose, onTableSelect }) => {
 
 const popupStyles = {
   overlay: {
-    position: 'fixed',
+    position: "fixed",
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
   container: {
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-    textAlign: 'center',
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "10px",
+    boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+    textAlign: "center",
   },
   select: {
-    margin: '10px 0',
-    padding: '5px',
-    borderRadius: '5px',
-    border: '1px solid #ddd',
-  }
+    margin: "10px 0",
+    padding: "5px",
+    borderRadius: "5px",
+    border: "1px solid #ddd",
+  },
 };
 
 // Menu Component
@@ -91,16 +93,21 @@ const Menu = () => {
     updatedItems,
     loading,
     showBottomNavbar,
-    orderedFood
-  } = useSelector(state => state.menu);
+    orderedFood,
+  } = useSelector((state) => state.menu);
 
   const [isTableSelected, setIsTableSelected] = useState(!!selectedTable);
   const [selectedType, setSelectedType] = useState(null); // New state for type filter
-  const selectedCategory = useSelector(state => state.selectedCategory);
-  
-  const [searchTerm, setSearchTerm] = useState('');
+  const selectedCategory = useSelector((state) => state.selectedCategory);
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredFoodItems, setFilteredFoodItems] = useState(foodItemImages);
   const [isFixed, setIsFixed] = useState(false);
+
+  const [combos, setCombos] = useState([]);
+  const [load, setLoad] = useState(true);
+
+  // Fetch combos from the backend
 
   useEffect(() => {
     if (!isTableSelected) {
@@ -111,8 +118,13 @@ const Menu = () => {
   useEffect(() => {
     const fetchBannerImages = async () => {
       try {
-        const response = await axios.get('https://qr-backend-application.onrender.com/banner/banners');
-        const urls = response.data.map(file => `https://qr-backend-application.onrender.com/banner/image/${file.fileId}`);
+        const response = await axios.get(
+          "https://qr-backend-application.onrender.com/banner/banners"
+        );
+        const urls = response.data.map(
+          (file) =>
+            `https://qr-backend-application.onrender.com/banner/image/${file.fileId}`
+        );
         dispatch(setImageUrls(urls));
       } catch (error) {
         console.error("Error fetching banner images: ", error);
@@ -121,11 +133,13 @@ const Menu = () => {
 
     const fetchCategoryImages = async () => {
       try {
-        const response = await axios.get('https://qr-backend-application.onrender.com/categories/category');
-        const categoryData = response.data.map(item => ({
+        const response = await axios.get(
+          "https://qr-backend-application.onrender.com/categories/category"
+        );
+        const categoryData = response.data.map((item) => ({
           categoryId: item.categoryId,
           categoryName: item.categoryName,
-          categoryUrl: `https://qr-backend-application.onrender.com/categories/image/${item.fileId}`
+          categoryUrl: `https://qr-backend-application.onrender.com/categories/image/${item.fileId}`,
         }));
         dispatch(setCategoryImages(categoryData));
       } catch (error) {
@@ -135,20 +149,22 @@ const Menu = () => {
 
     const fetchFoodItemsImages = async () => {
       try {
-        const response = await axios.get('https://qr-backend-application.onrender.com/menu/stocks');
+        const response = await axios.get(
+          "https://qr-backend-application.onrender.com/menu/stocks"
+        );
         const foodItemsData = response.data;
-        const urls = foodItemsData.map(item => ({
+        const urls = foodItemsData.map((item) => ({
           typeName: item.name,
           typeImageUrl: `https://qr-backend-application.onrender.com/files/image/${item.imageId}`,
           typePrice: item.price,
           categoryName: item.categoryName,
           typeId: item._id,
           type: item.type,
-          availability: item.availability
+          availability: item.availability,
         }));
         dispatch(setFoodItemImages(urls));
 
-        const itemsWithCounts = urls.map(item => ({
+        const itemsWithCounts = urls.map((item) => ({
           name: item.typeName,
           count: 0,
           type: item.type,
@@ -156,7 +172,7 @@ const Menu = () => {
           categoryName: item.categoryName,
           typeId: item.typeId,
           availability: item.availability,
-          tableNumber: selectedTable || null
+          tableNumber: selectedTable || null,
         }));
         dispatch(setUpdatedItems(itemsWithCounts));
       } catch (error) {
@@ -165,7 +181,11 @@ const Menu = () => {
     };
 
     const fetchData = async () => {
-      await Promise.all([fetchBannerImages(), fetchCategoryImages(), fetchFoodItemsImages()]);
+      await Promise.all([
+        fetchBannerImages(),
+        fetchCategoryImages(),
+        fetchFoodItemsImages(),
+      ]);
       dispatch(setLoading(false));
     };
 
@@ -174,7 +194,7 @@ const Menu = () => {
 
   useEffect(() => {
     // Filter food items based on the search term
-    const filtered = foodItemImages.filter(item => 
+    const filtered = foodItemImages.filter((item) =>
       item.typeName.toLowerCase().startsWith(searchTerm.toLowerCase())
     );
     setFilteredFoodItems(filtered);
@@ -190,12 +210,31 @@ const Menu = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  useEffect(() => {
+    const fetchCombos = async () => {
+      try {
+        const response = await axios.get(
+          "https://qr-backend-application.onrender.com/combos/combo"
+        );
+        setCombos(response.data);
+      } catch (error) {
+        console.error("Error fetching combos:", error);
+      } finally {
+        setLoad(false);
+      }
+    };
+
+    fetchCombos();
   }, []);
 
+  if (load) {
+    return <div>load...</div>;
+  }
   const handleCountChange = (itemName, delta) => {
-    const newItems = updatedItems.map(item =>
+    const newItems = updatedItems.map((item) =>
       item.name === itemName
         ? { ...item, count: Math.max(0, item.count + delta) }
         : item
@@ -205,7 +244,7 @@ const Menu = () => {
 
   const handleAddToCart = () => {
     if (orderedFood.length > 0) {
-      navigate('/addToCart');
+      navigate("/addToCart");
     }
   };
 
@@ -228,21 +267,25 @@ const Menu = () => {
     setSelectedType(type);
   };
 
-  const filteredFoodItemsByCategory = filteredFoodItems.filter(item => 
-    (selectedCategory ? item.categoryName === selectedCategory : true) &&
-    (selectedType ? item.type === selectedType : true)
+  const filteredFoodItemsByCategory = filteredFoodItems.filter(
+    (item) =>
+      (selectedCategory ? item.categoryName === selectedCategory : true) &&
+      (selectedType ? item.type === selectedType : true)
   );
 
   return (
     <>
       {!isTableSelected ? (
-        <TableSelectionPopup onClose={() => setIsTableSelected(true)} onTableSelect={handleTableSelect} />
+        <TableSelectionPopup
+          onClose={() => setIsTableSelected(true)}
+          onTableSelect={handleTableSelect}
+        />
       ) : (
         <>
           <MenuNavbar />
 
           {/* Ensure top padding to prevent overlap with fixed navbar */}
-          <div style={{ paddingTop: '2px' }}>
+          <div style={{ paddingTop: "2px" }}>
             {loading ? (
               <Loader />
             ) : (
@@ -250,7 +293,12 @@ const Menu = () => {
                 {/* Banner Section */}
                 <div className="carousel-container">
                   {imageUrls.length > 0 ? (
-                    <Carousel interval={3000} controls={false} indicators={false} pause={false}>
+                    <Carousel
+                      interval={3000}
+                      controls={false}
+                      indicators={false}
+                      pause={false}
+                    >
                       {imageUrls.map((image, index) => (
                         <Carousel.Item key={index}>
                           <img
@@ -267,30 +315,30 @@ const Menu = () => {
                 </div>
 
                 {/* Search Bar */}
-                <div 
+                <div
                   style={{
-                    position: isFixed ? 'fixed' : 'relative',
-                    top: isFixed ? '0px' : 'auto',
+                    position: isFixed ? "fixed" : "relative",
+                    top: isFixed ? "0px" : "auto",
                     left: 0,
                     right: 0,
                     zIndex: 1000,
-                    backgroundColor: '#F5F5F5',
-                    borderBottom: '1px solid #ddd',
-                    boxShadow: isFixed ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
-                    transition: 'box-shadow 0.3s, background-color 0.3s'
+                    backgroundColor: "#F5F5F5",
+                    borderBottom: "1px solid #ddd",
+                    boxShadow: isFixed ? "0 2px 5px rgba(0,0,0,0.1)" : "none",
+                    transition: "box-shadow 0.3s, background-color 0.3s",
                   }}
                 >
-                  <div 
+                  <div
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      border: '1px solid #ddd', // Updated border color to a lighter shade
-                      borderRadius: '5px',
-                      padding: '5px 10px',
-                      width: '100%',
-                      maxWidth: '400px',
-                      margin: 'auto',
-                      backgroundColor: '#fff' // Changed to white for better visibility
+                      display: "flex",
+                      alignItems: "center",
+                      border: "1px solid #ddd", // Updated border color to a lighter shade
+                      borderRadius: "5px",
+                      padding: "5px 10px",
+                      width: "100%",
+                      maxWidth: "400px",
+                      margin: "auto",
+                      backgroundColor: "#fff", // Changed to white for better visibility
                     }}
                   >
                     <input
@@ -299,23 +347,23 @@ const Menu = () => {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       style={{
-                        border: 'none',
-                        outline: 'none',
+                        border: "none",
+                        outline: "none",
                         flex: 1,
-                        padding: '5px',
-                        fontSize: '16px',
-                        backgroundColor: 'transparent' // Ensure the background of input is transparent
+                        padding: "5px",
+                        fontSize: "16px",
+                        backgroundColor: "transparent", // Ensure the background of input is transparent
                       }}
                     />
                     <button
                       type="button"
                       style={{
-                        backgroundColor: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '5px',
-                        fontSize: '20px',
-                        color: '#007bff'
+                        backgroundColor: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "5px",
+                        fontSize: "20px",
+                        color: "#007bff",
                       }}
                     >
                       <FaSearch />
@@ -327,102 +375,130 @@ const Menu = () => {
                 <CategoryListing />
 
                 {/* Filter Buttons */}
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '10px' }}>
-                  <button 
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    margin: "10px",
+                  }}
+                >
+                  <button
                     style={{
-                      backgroundColor: 'green', 
-                      color: 'white', 
-                      border: 'none', 
-                      padding: '10px 20px', 
-                      borderRadius: '5px', 
-                      margin: '5px', 
-                      width: '100%', 
-                      maxWidth: '200px', 
-                      cursor: 'pointer', 
-                      fontSize: '16px'
+                      backgroundColor: "green",
+                      color: "white",
+                      border: "none",
+                      padding: "10px 20px",
+                      borderRadius: "5px",
+                      margin: "5px",
+                      width: "100%",
+                      maxWidth: "200px",
+                      cursor: "pointer",
+                      fontSize: "16px",
                     }}
-                    onClick={() => handleTypeSelect('Veg')}
+                    onClick={() => handleTypeSelect("Veg")}
                   >
                     Veg
                   </button>
-                  <button 
+                  <button
                     style={{
-                      backgroundColor: 'maroon', 
-                      color: 'white', 
-                      border: 'none', 
-                      padding: '10px 20px', 
-                      borderRadius: '5px', 
-                      margin: '5px', 
-                      width: '100%', 
-                      maxWidth: '200px', 
-                      cursor: 'pointer', 
-                      fontSize: '16px'
+                      backgroundColor: "maroon",
+                      color: "white",
+                      border: "none",
+                      padding: "10px 20px",
+                      borderRadius: "5px",
+                      margin: "5px",
+                      width: "100%",
+                      maxWidth: "200px",
+                      cursor: "pointer",
+                      fontSize: "16px",
                     }}
-                    onClick={() => handleTypeSelect('Non Veg')}
+                    onClick={() => handleTypeSelect("Non Veg")}
                   >
                     Non Veg
                   </button>
                 </div>
-                <br/>
+                <br />
 
                 {/*Combo Banner Section */}
                 <ComboBanner />
 
-                <br/>
+                <br />
 
                 {/* Food items Section */}
                 <div className="food-items-container">
+                  <h2>Menu</h2>
                   <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                     {filteredFoodItemsByCategory.map((item, index) => (
                       <Col key={index} className="d-flex align-items-stretch">
-                        <Card className={`food-item-card ${item.availability !== 'available' ? 'blur' : ''}`}>
+                        <Card
+                          className={`food-item-card ${
+                            item.availability !== "available" ? "blur" : ""
+                          }`}
+                        >
                           <div className="card-content">
                             <div className="content-left">
                               <div className="item-details">
-                                <h3>{item.type === "Veg" ? <>🟢 Veg</> : <>🔴 Non Veg</> }</h3>
                                 <h3>{item.typeName}</h3>
                                 <h4>Price: {item.typePrice}</h4>
+                                <h3>
+                                  {item.type === "Veg" ? (
+                                    <>🟢 Veg</>
+                                  ) : (
+                                    <>🔴 Non Veg</>
+                                  )}
+                                </h3>
+
                                 <div className="additional-content"></div>
                               </div>
-                              {item.availability === 'available' && updatedItems.find(i => i.name === item.typeName)?.count > 0 ? (
+                              {item.availability === "available" &&
+                              updatedItems.find((i) => i.name === item.typeName)
+                                ?.count > 0 ? (
                                 <div className="counter">
-                                  <button 
-                                    className="button" 
-                                    onClick={() => handleCountChange(item.typeName, -1)}
+                                  <button
+                                    className="button"
+                                    onClick={() =>
+                                      handleCountChange(item.typeName, -1)
+                                    }
                                   >
                                     -
                                   </button>
                                   <span className="count">
-                                    {updatedItems.find(i => i.name === item.typeName)?.count}
+                                    {
+                                      updatedItems.find(
+                                        (i) => i.name === item.typeName
+                                      )?.count
+                                    }
                                   </span>
-                                  <button 
-                                    className="button" 
-                                    onClick={() => handleCountChange(item.typeName, 1)}
+                                  <button
+                                    className="button"
+                                    onClick={() =>
+                                      handleCountChange(item.typeName, 1)
+                                    }
                                   >
                                     +
                                   </button>
                                 </div>
-                              ) : item.availability === 'available' ? (
-                                <button 
-                                  className="add-button" 
-                                  onClick={() => handleCountChange(item.typeName, 1)}
+                              ) : item.availability === "available" ? (
+                                <button
+                                  className="add-button"
+                                  onClick={() =>
+                                    handleCountChange(item.typeName, 1)
+                                  }
                                 >
                                   Add
                                 </button>
                               ) : (
-                                <button 
-                                  className="add-button" 
-                                  disabled
-                                >
+                                <button className="add-button" disabled>
                                   Unavailable
                                 </button>
                               )}
                             </div>
                             <div className="content-right">
-                              <img 
-                                src={item.typeImageUrl} 
-                                alt={item.typeName} 
-                                className="right-image" 
+                              <img
+                                src={item.typeImageUrl}
+                                alt={item.typeName}
+                                className="right-image"
                               />
                             </div>
                           </div>
@@ -431,9 +507,59 @@ const Menu = () => {
                     ))}
                   </Row>
                 </div>
-                <br/>
-                <br/>
 
+                {/* combo */}
+                <div className="combo-container">
+                  <h2>Combo</h2>
+                  <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+                    {combos.map((combo, index) => (
+                      <Col key={index} className="d-flex align-items-stretch">
+                        <Card className="combo-item-card">
+                          <div className="card-content">
+                            <div className="content-left">
+                              <div className="combo-details">
+                                <h3>{combo.comboName}</h3>
+                                
+                                <h4>Price: {combo.comboPrice}</h4>
+                                <h3>
+                                  {combo.comboType === "Veg" ? (
+                                    <>🟢 Veg</>
+                                  ) : (
+                                    <>🔴 Non Veg</>
+                                  )}
+                                </h3>
+                                <div className="additional-content"></div>
+                              </div>
+                              <button
+                                className="add-button"
+                                // onClick={() =>
+                                //   handleCountChange(item.typeName, 1)
+                                // }
+                              >
+                                Add
+                              </button>
+                            </div>
+
+                            <div className="content-right">
+                              {/* Display combo image */}
+                              <img
+                                src={`https://qr-backend-application.onrender.com/combos/image/${combo.comboImage}`}
+                                alt={combo.comboName}
+                                className="right-image"
+                              />
+                            </div>
+                          </div>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+
+                <br />
+                <br />
+
+                <br />
+                <br />
                 {/* Bottom Navbar */}
                 {showBottomNavbar && (
                   <div style={bottomNavbarStyles.container}>
@@ -441,8 +567,8 @@ const Menu = () => {
                       <span>{orderedFood.length} Items added</span>
                     </div>
                     <div style={bottomNavbarStyles.right}>
-                      <button 
-                        style={bottomNavbarStyles.button} 
+                      <button
+                        style={bottomNavbarStyles.button}
                         onClick={handleAddToCart}
                         disabled={!orderedFood.length}
                       >
@@ -455,18 +581,26 @@ const Menu = () => {
                 {/* Sticky Dropdown Button */}
                 <div style={dropdownStyles.container}>
                   <Dropdown>
-                    <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn btn-primary'>
+                    <Dropdown.Toggle
+                      variant="success"
+                      id="dropdown-basic"
+                      className="btn btn-primary"
+                    >
                       Menu 🥗
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => handleCategorySelect("All")}>
+                      <Dropdown.Item
+                        onClick={() => handleCategorySelect("All")}
+                      >
                         All
                       </Dropdown.Item>
-                      {categoryImages.map(category => (
-                        <Dropdown.Item 
+                      {categoryImages.map((category) => (
+                        <Dropdown.Item
                           key={category.categoryId}
-                          onClick={() => handleCategorySelect(category.categoryName)}
+                          onClick={() =>
+                            handleCategorySelect(category.categoryName)
+                          }
                         >
                           {category.categoryName}
                         </Dropdown.Item>
@@ -486,41 +620,41 @@ const Menu = () => {
 
 const bottomNavbarStyles = {
   container: {
-    position: 'fixed',
+    position: "fixed",
     bottom: "60px",
-    width: '100%',
-    backgroundColor: '#fff',
-    borderTop: '1px solid #ddd',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 20px',
-    boxShadow: '0 -2px 5px rgba(0,0,0,0.1)',
+    width: "100%",
+    backgroundColor: "#fff",
+    borderTop: "1px solid #ddd",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "10px 20px",
+    boxShadow: "0 -2px 5px rgba(0,0,0,0.1)",
     zIndex: 1000,
   },
   left: {
-    fontSize: '16px',
-    fontWeight: 'bold',
+    fontSize: "16px",
+    fontWeight: "bold",
   },
   right: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
   button: {
-    backgroundColor: '#ff6f61',
-    border: 'none',
-    color: 'white',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    borderRadius: '5px',
-  }
+    backgroundColor: "#ff6f61",
+    border: "none",
+    color: "white",
+    padding: "10px 20px",
+    cursor: "pointer",
+    borderRadius: "5px",
+  },
 };
 
 const dropdownStyles = {
   container: {
-    position: 'fixed',
-    bottom: '20%',
-    right: '10%',
+    position: "fixed",
+    bottom: "20%",
+    right: "10%",
     zIndex: 1100,
   },
 };

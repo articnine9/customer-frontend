@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedCategory } from '../../../SlicesFolder/Slices/selectedCategorySlice'; // Import the action
+import { setSelectedCategory } from '../../../SlicesFolder/Slices/selectedCategorySlice'; 
 import './categoryListing.css';
 
 const CategoryListing = () => {
@@ -19,7 +19,7 @@ const CategoryListing = () => {
 
     const onMouseMove = (e) => {
       const x = e.pageX - container.offsetLeft;
-      const walk = (x - startX) * 2; // Scroll speed multiplier
+      const walk = (x - startX) * 2; 
       container.scrollLeft = scrollLeft - walk;
     };
 
