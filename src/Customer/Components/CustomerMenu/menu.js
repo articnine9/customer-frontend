@@ -105,6 +105,8 @@ const Menu = () => {
   const [isFixed, setIsFixed] = useState(false);
 
   const [combos, setCombos] = useState([]);
+  const [selectedCombos, setSelectedCombos] = useState({});
+  const [tablesWithOrders, setTablesWithOrders] = useState(new Set());
   const [load, setLoad] = useState(true);
 
   // Fetch combos from the backend
@@ -179,12 +181,24 @@ const Menu = () => {
         console.error("Error fetching food item images: ", error);
       }
     };
-
+    const fetchCombos = async () => {
+      try {
+        const response = await axios.get(
+          "https://qr-backend-application.onrender.com/combos/combo"
+        );
+        setCombos(response.data);
+      } catch (error) {
+        console.error("Error fetching combos:", error);
+      } finally {
+        setLoad(false);
+      }
+    };
     const fetchData = async () => {
       await Promise.all([
         fetchBannerImages(),
         fetchCategoryImages(),
         fetchFoodItemsImages(),
+        fetchCombos()
       ]);
       dispatch(setLoading(false));
     };
@@ -213,25 +227,9 @@ const Menu = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  useEffect(() => {
-    const fetchCombos = async () => {
-      try {
-        const response = await axios.get(
-          "https://qr-backend-application.onrender.com/combos/combo"
-        );
-        setCombos(response.data);
-      } catch (error) {
-        console.error("Error fetching combos:", error);
-      } finally {
-        setLoad(false);
-      }
-    };
-
-    fetchCombos();
-  }, []);
 
   if (load) {
-    return <div>load...</div>;
+    return <div>loading...</div>;
   }
   const handleCountChange = (itemName, delta) => {
     const newItems = updatedItems.map((item) =>
@@ -263,8 +261,50 @@ const Menu = () => {
     dispatch(setSelectedCategory(categoryName === "All" ? null : categoryName));
   };
 
-  const handleTypeSelect = (type) => {
-    setSelectedType(type);
+const handleTypeSelect = (type) => {
+    if (selectedType === type) {
+      setSelectedType(null);  // If the same type is clicked, reset to show all items
+    } else {
+      setSelectedType(type);  // Otherwise, set the new type
+    }
+  };
+
+
+  const handleAddCombo = (combo) => {
+    setSelectedCombos((prevCombos) => {
+      const newCombos = { ...prevCombos };
+      if (newCombos[combo._id]) {
+        newCombos[combo._id] = {
+          ...newCombos[combo._id],
+          count: newCombos[combo._id].count + 1,
+        };
+      } else {
+        newCombos[combo._id] = {
+          ...combo,
+          count: 1,
+          status: "Not Served",
+        };
+      }
+      setTablesWithOrders((prev) => new Set([...prev, combo.tableNumber]));
+      return newCombos;
+    });
+  };
+
+  const handleRemoveCombo = (id) => {
+    setSelectedCombos((prevCombos) => {
+      const newCombos = { ...prevCombos };
+      if (newCombos[id]) {
+        if (newCombos[id].count > 1) {
+          newCombos[id] = {
+            ...newCombos[id],
+            count: newCombos[id].count - 1,
+          };
+        } else {
+          delete newCombos[id];
+        }
+      }
+      return newCombos;
+    });
   };
 
   const filteredFoodItemsByCategory = filteredFoodItems.filter(
@@ -272,7 +312,9 @@ const Menu = () => {
       (selectedCategory ? item.categoryName === selectedCategory : true) &&
       (selectedType ? item.type === selectedType : true)
   );
-
+  const filteredcombo = combos.filter((combos) =>
+    selectedType ? combos.comboType === selectedType : true
+  );
   return (
     <>
       {!isTableSelected ? (
@@ -512,46 +554,82 @@ const Menu = () => {
                 <div className="combo-container">
                   <h2>Combo</h2>
                   <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-                    {combos.map((combo, index) => (
-                      <Col key={index} className="d-flex align-items-stretch">
-                        <Card className="combo-item-card">
-                          <div className="card-content">
-                            <div className="content-left">
-                              <div className="combo-details">
-                                <h3>{combo.comboName}</h3>
-                                
-                                <h4>Price: {combo.comboPrice}</h4>
-                                <h3>
-                                  {combo.comboType === "Veg" ? (
-                                    <>🟢 Veg</>
-                                  ) : (
-                                    <>🔴 Non Veg</>
-                                  )}
-                                </h3>
-                                <div className="additional-content"></div>
-                              </div>
-                              <button
-                                className="add-button"
-                                // onClick={() =>
-                                //   handleCountChange(item.typeName, 1)
-                                // }
-                              >
-                                Add
-                              </button>
-                            </div>
+                    {filteredcombo.map((combo, index) => {
+                      const isComboAdded = selectedCombos[combo._id];
+                      const comboCount = isComboAdded
+                        ? selectedCombos[combo._id].count
+                        : 0;
 
-                            <div className="content-right">
-                              {/* Display combo image */}
-                              <img
-                                src={`https://qr-backend-application.onrender.com/combos/image/${combo.comboImage}`}
-                                alt={combo.comboName}
-                                className="right-image"
-                              />
+                      return (
+                        <Col key={index} className="d-flex align-items-stretch">
+                          <Card className={`combo-item-card ${
+                            combo.availability !== "available" ? "blur" : ""
+                          }`}>
+                            <div className="card-content">
+                              <div className="content-left">
+                                <div className="combo-details">
+                                  <h3>{combo.comboName}</h3>
+                                  <h4>Price: {combo.comboPrice}</h4>
+                                  <h3>
+                                    {combo.comboType === "Veg" ? (
+                                      <>🟢 Veg</>
+                                    ) : (
+                                      <>🔴 Non Veg</>
+                                    )}
+                                  </h3>
+                                  <div className="additional-content"></div>
+                                </div>
+
+                                {/* Add/Remove Buttons */}
+                                {combo.availability === "available" ? (
+                                  comboCount > 0 ? (
+                                    <div className="counter">
+                                      <button
+                                        className="button"
+                                        onClick={() =>
+                                          handleRemoveCombo(combo._id)
+                                        }
+                                      >
+                                        -
+                                      </button>
+                                      <span className="count">
+                                        {comboCount}
+                                      </span>
+                                      <button
+                                        className="button"
+                                        onClick={() => handleAddCombo(combo)}
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      className="add-button"
+                                      onClick={() => handleAddCombo(combo)}
+                                    >
+                                      Add
+                                    </button>
+                                  )
+                                ) : (
+                                  <button className="add-button" disabled>
+                                    Unavailable
+                                  </button>
+                                )}
+                              </div>
+
+                              <div className="content-right">
+                                {/* Display combo image */}
+                                <img
+                                  src={`https://qr-backend-application.onrender.com/combos/image/${combo.comboImage}`}
+                                  alt={combo.comboName}
+                                  className="right-image"
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </Card>
-                      </Col>
-                    ))}
+                          </Card>
+                        </Col>
+                      );
+                    })}
                   </Row>
                 </div>
 

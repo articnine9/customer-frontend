@@ -61,8 +61,8 @@ const OrderStatus = () => {
   return (
     <>
       <MenuNavbar />
-      <h1>Order Status</h1>
-      <div className="container">
+      <h1 className='order-head'>Order Status</h1>
+      <div className="container order-cnt">
         {currentTableOrders.length > 0 ? (
           <div className="row">
             {allItemsFromFiltered.length > 0 ? (

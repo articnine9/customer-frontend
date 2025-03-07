@@ -386,8 +386,7 @@
   padding: 10px;
 }
 .combo-container h2,
-.food-items-container h2
-{
+.food-items-container h2 {
   width: 100%;
 }
 .food-item-card,
@@ -417,7 +416,8 @@
   justify-content: space-between;
 }
 
-.item-details,.combo-details {
+.item-details,
+.combo-details {
   margin-bottom: 10px;
 }
 
@@ -490,7 +490,6 @@
   font-family: monospace;
   color: #333;
 }
-
 
 /* Bottom Navbar Styles */
 .bottom-navbar {
