@@ -37,6 +37,10 @@ const menuSlice = createSlice({
         setLoading(state, action) {
             state.loading = action.payload;
         },
+        
+            setOrderedFood(state, action) {
+              state.orderedFood = action.payload;
+            },
         updateCartItemCount(state, action) {
             const { name, delta } = action.payload;
             state.updatedItems = state.updatedItems.map(item =>
@@ -62,7 +66,8 @@ export const {
     setUpdatedItems,
     setLoading,
     updateCartItemCount,
-    setAdditionalItems
+    setAdditionalItems,
+    setOrderedFood 
 } = menuSlice.actions;
 
 export default menuSlice.reducer;

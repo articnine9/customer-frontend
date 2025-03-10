@@ -30,7 +30,6 @@
     margin-right: 20px; /* Space between items */
     background-color: white;
     border-radius: 10px; /* Rounded corners */
-    
     padding: 10px; /* Padding inside item */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition effects */
 }

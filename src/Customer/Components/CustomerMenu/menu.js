@@ -10,6 +10,7 @@ import {
   setCategoryImages,
   setFoodItemImages,
   setUpdatedItems,
+  setOrderedFood,
   setLoading,
 } from "../../../SlicesFolder/Slices/menuSlice";
 import MenuNavbar from "../CustomerPageNavbar/navBar";
@@ -97,7 +98,7 @@ const Menu = () => {
   } = useSelector((state) => state.menu);
 
   const [isTableSelected, setIsTableSelected] = useState(!!selectedTable);
-  const [selectedType, setSelectedType] = useState(null); // New state for type filter
+  const [selectedType, setSelectedType] = useState(null);
   const selectedCategory = useSelector((state) => state.selectedCategory);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -198,7 +199,7 @@ const Menu = () => {
         fetchBannerImages(),
         fetchCategoryImages(),
         fetchFoodItemsImages(),
-        fetchCombos()
+        fetchCombos(),
       ]);
       dispatch(setLoading(false));
     };
@@ -231,6 +232,7 @@ const Menu = () => {
   if (load) {
     return <div>loading...</div>;
   }
+
   const handleCountChange = (itemName, delta) => {
     const newItems = updatedItems.map((item) =>
       item.name === itemName
@@ -241,7 +243,7 @@ const Menu = () => {
   };
 
   const handleAddToCart = () => {
-    if (orderedFood.length > 0) {
+    if (orderedFood.length > 0 || combos.length > 0) {
       navigate("/addToCart");
     }
   };
@@ -261,31 +263,46 @@ const Menu = () => {
     dispatch(setSelectedCategory(categoryName === "All" ? null : categoryName));
   };
 
-const handleTypeSelect = (type) => {
+  const handleTypeSelect = (type) => {
     if (selectedType === type) {
-      setSelectedType(null);  // If the same type is clicked, reset to show all items
+      setSelectedType(null);
     } else {
-      setSelectedType(type);  // Otherwise, set the new type
+      setSelectedType(type);
     }
   };
 
-
   const handleAddCombo = (combo) => {
+    console.log("Adding combo:", combo); // Check combo details
+
     setSelectedCombos((prevCombos) => {
       const newCombos = { ...prevCombos };
       if (newCombos[combo._id]) {
-        newCombos[combo._id] = {
-          ...newCombos[combo._id],
-          count: newCombos[combo._id].count + 1,
-        };
+        newCombos[combo._id].count += 1;
       } else {
-        newCombos[combo._id] = {
-          ...combo,
-          count: 1,
-          status: "Not Served",
-        };
+        newCombos[combo._id] = { ...combo, count: 1, status: "Not Served" };
       }
       setTablesWithOrders((prev) => new Set([...prev, combo.tableNumber]));
+
+        const updatedOrderedFood = [...orderedFood];
+      const comboExists = updatedOrderedFood.some(
+        (item) => item._id === combo._id
+      );
+
+      if (!comboExists) {
+        updatedOrderedFood.push({
+          _id: combo._id,
+          name: combo.comboName, // Assuming comboName is the correct field
+          count: 1,
+          categoryName: combo.comboCategoryName,
+          type: combo.comboType,
+          price: combo.comboPrice, // Assuming comboPrice exists
+          tableNumber: selectedTable || null,
+        });
+      }
+
+      console.log("Updated ordered food:", updatedOrderedFood); // Check updated orderedFood
+
+      dispatch(setOrderedFood(updatedOrderedFood)); // Dispatch to Redux
       return newCombos;
     });
   };
@@ -312,9 +329,11 @@ const handleTypeSelect = (type) => {
       (selectedCategory ? item.categoryName === selectedCategory : true) &&
       (selectedType ? item.type === selectedType : true)
   );
+
   const filteredcombo = combos.filter((combos) =>
     selectedType ? combos.comboType === selectedType : true
   );
+
   return (
     <>
       {!isTableSelected ? (
@@ -562,9 +581,11 @@ const handleTypeSelect = (type) => {
 
                       return (
                         <Col key={index} className="d-flex align-items-stretch">
-                          <Card className={`combo-item-card ${
-                            combo.availability !== "available" ? "blur" : ""
-                          }`}>
+                          <Card
+                            className={`combo-item-card ${
+                              combo.availability !== "available" ? "blur" : ""
+                            }`}
+                          >
                             <div className="card-content">
                               <div className="content-left">
                                 <div className="combo-details">
