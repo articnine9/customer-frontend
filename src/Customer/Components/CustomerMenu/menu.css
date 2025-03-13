@@ -471,10 +471,6 @@
   cursor: not-allowed;
 }
 
-.food-item-card.blur,
-.combo-item-card.blur {
-  filter: blur(2px);
-}
 .item-details h3,
 .combo-details h3 {
   font-weight: bolder;

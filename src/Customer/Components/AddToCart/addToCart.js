@@ -26,7 +26,7 @@ const AddToCart = () => {
         const response = await axios.get(
           "https://qr-backend-application.onrender.com/cart/items"
         );
-        setPostedItems(response.data.map((item) => item.name)); // Track posted items by their name
+        setPostedItems(response.data.map((item) => item.name)); 
       } catch (error) {
         console.error("Error fetching posted items: ", error);
       }

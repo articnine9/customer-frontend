@@ -12,6 +12,8 @@ import {
   setUpdatedItems,
   setOrderedFood,
   setLoading,
+  addCombo,
+  removeCombo,
 } from "../../../SlicesFolder/Slices/menuSlice";
 import MenuNavbar from "../CustomerPageNavbar/navBar";
 import axios from "axios";
@@ -95,6 +97,7 @@ const Menu = () => {
     loading,
     showBottomNavbar,
     orderedFood,
+    selectedCombos,
   } = useSelector((state) => state.menu);
 
   const [isTableSelected, setIsTableSelected] = useState(!!selectedTable);
@@ -106,7 +109,6 @@ const Menu = () => {
   const [isFixed, setIsFixed] = useState(false);
 
   const [combos, setCombos] = useState([]);
-  const [selectedCombos, setSelectedCombos] = useState({});
   const [tablesWithOrders, setTablesWithOrders] = useState(new Set());
   const [load, setLoad] = useState(true);
 
@@ -272,56 +274,11 @@ const Menu = () => {
   };
 
   const handleAddCombo = (combo) => {
-    console.log("Adding combo:", combo); // Check combo details
-
-    setSelectedCombos((prevCombos) => {
-      const newCombos = { ...prevCombos };
-      if (newCombos[combo._id]) {
-        newCombos[combo._id].count += 1;
-      } else {
-        newCombos[combo._id] = { ...combo, count: 1, status: "Not Served" };
-      }
-      setTablesWithOrders((prev) => new Set([...prev, combo.tableNumber]));
-
-        const updatedOrderedFood = [...orderedFood];
-      const comboExists = updatedOrderedFood.some(
-        (item) => item._id === combo._id
-      );
-
-      if (!comboExists) {
-        updatedOrderedFood.push({
-          _id: combo._id,
-          name: combo.comboName, // Assuming comboName is the correct field
-          count: 1,
-          categoryName: combo.comboCategoryName,
-          type: combo.comboType,
-          price: combo.comboPrice, // Assuming comboPrice exists
-          tableNumber: selectedTable || null,
-        });
-      }
-
-      console.log("Updated ordered food:", updatedOrderedFood); // Check updated orderedFood
-
-      dispatch(setOrderedFood(updatedOrderedFood)); // Dispatch to Redux
-      return newCombos;
-    });
+    dispatch(addCombo(combo));
   };
 
-  const handleRemoveCombo = (id) => {
-    setSelectedCombos((prevCombos) => {
-      const newCombos = { ...prevCombos };
-      if (newCombos[id]) {
-        if (newCombos[id].count > 1) {
-          newCombos[id] = {
-            ...newCombos[id],
-            count: newCombos[id].count - 1,
-          };
-        } else {
-          delete newCombos[id];
-        }
-      }
-      return newCombos;
-    });
+  const handleRemoveCombo = (comboId) => {
+    dispatch(removeCombo(comboId));
   };
 
   const filteredFoodItemsByCategory = filteredFoodItems.filter(
@@ -590,6 +547,18 @@ const Menu = () => {
                               <div className="content-left">
                                 <div className="combo-details">
                                   <h3>{combo.comboName}</h3>
+                                  <div className="item-names">
+                                    <p>
+                                      <strong>Items:</strong>{" "}
+                                      {combo.comboItems.map((item, idx) => (
+                                        <span key={idx}>
+                                          {item.name}
+                                          {idx < combo.comboItems.length - 1 &&
+                                            ", "}
+                                        </span>
+                                      ))}
+                                    </p>
+                                  </div>
                                   <h4>Price: {combo.comboPrice}</h4>
                                   <h3>
                                     {combo.comboType === "Veg" ? (
@@ -598,10 +567,8 @@ const Menu = () => {
                                       <>🔴 Non Veg</>
                                     )}
                                   </h3>
-                                  <div className="additional-content"></div>
                                 </div>
 
-                                {/* Add/Remove Buttons */}
                                 {combo.availability === "available" ? (
                                   comboCount > 0 ? (
                                     <div className="counter">
@@ -639,7 +606,6 @@ const Menu = () => {
                               </div>
 
                               <div className="content-right">
-                                {/* Display combo image */}
                                 <img
                                   src={`https://qr-backend-application.onrender.com/combos/image/${combo.comboImage}`}
                                   alt={combo.comboName}
