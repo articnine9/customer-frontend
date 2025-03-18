@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './orderStatus.css'; // Ensure this file includes the necessary CSS
-import MenuNavbar from '../CustomerPageNavbar/navBar';
-import Footer from '../CustomerPageFooter/footer'; // Use the correct path to your Footer component
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./orderStatus.css"; // Ensure this file includes the necessary CSS
+import MenuNavbar from "../CustomerPageNavbar/navBar";
+import Footer from "../CustomerPageFooter/footer"; // Use the correct path to your Footer component
 
 const OrderStatus = () => {
   const [currentTableOrders, setCurrentTableOrders] = useState([]);
@@ -10,25 +10,27 @@ const OrderStatus = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const currentTableNumber = localStorage.getItem('currentTableNumber');
+  const currentTableNumber = localStorage.getItem("currentTableNumber");
 
   useEffect(() => {
     const fetchCartItems = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('https://qr-backend-application.onrender.com/cart/items');
+        const response = await axios.get(
+          "https://qr-backend-application.onrender.com/cart/items"
+        );
         const cartItems = response.data;
 
-       
-
         if (cartItems.length > 0 && currentTableNumber) {
-          // Filter cart items by the current table number
-          const filteredItems = cartItems.filter(item => item.tableNumber === parseInt(currentTableNumber));
-          
-          // Combine both items and combos
-          const itemsFromFiltered = filteredItems.flatMap(item => [...item.items, ...item.combos]);
+          const filteredItems = cartItems.filter(
+            (item) => item.tableNumber === parseInt(currentTableNumber)
+          );
 
-          // Set orders and items
+          const itemsFromFiltered = filteredItems.flatMap((item) => [
+            ...item.items,
+            ...item.combos,
+          ]);
+
           if (filteredItems.length > 0) {
             setCurrentTableOrders(filteredItems[0].items);
           } else {
@@ -36,6 +38,7 @@ const OrderStatus = () => {
           }
 
           setAllItemsFromFiltered(itemsFromFiltered);
+          console.log("Items from filtered: ", itemsFromFiltered);
         } else {
           setCurrentTableOrders([]);
           setAllItemsFromFiltered([]);
@@ -61,27 +64,43 @@ const OrderStatus = () => {
   return (
     <>
       <MenuNavbar />
-      <h1 className='order-head'>Order Status</h1>
+      <h1 className="order-head">Order Status</h1>
       <div className="container order-cnt">
-        {currentTableOrders.length > 0 ? (
+        {allItemsFromFiltered.length > 0 ? (
           <div className="row">
-            {allItemsFromFiltered.length > 0 ? (
-              allItemsFromFiltered.map((foodItem, index) => (
-                <div key={index} className="col-md-4 mb-4">
-                  <div 
-                    className={`card ${foodItem.status === 'Served' ? 'bg-success text-light' : 'bg-danger text-light'}`}
-                  >
-                    <div className="card-body">
-                      <h5 className="card-title">{foodItem.name}</h5>
-                      <p className="card-text text-light" ><strong>Count:</strong> {foodItem.count}</p>
-                      <p className="card-text text-light"><strong>Status:</strong> {foodItem.status}</p>
-                    </div>
+            {allItemsFromFiltered.map((foodItem, index) => (
+              <div key={index} className="col-md-4 mb-4">
+                <div
+                  className={`card ${
+                    foodItem.status === "Served"
+                      ? "bg-success text-light"
+                      : "bg-danger text-light"
+                  }`}
+                >
+                  <div className="card-body">
+                    <h5 className="card-title">{foodItem.name}</h5>
+                    <p className="card-text text-light">
+                      <strong>Count:</strong> {foodItem.count}
+                    </p>
+                    <p className="card-text text-light">
+                      <strong>Status:</strong> {foodItem.status}
+                    </p>
+                    {foodItem.items && foodItem.items.length > 0 && (
+                      <div>
+                        <strong>Combo Items:</strong>
+                        <ul>
+                          {foodItem.items.map((comboItem, comboIndex) => (
+                            <li key={comboIndex} style={{ listStyleType: "none" }}>
+                              {comboItem.name} - {comboItem.quantity}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))
-            ) : (
-              <p>No updated food items available</p>
-            )}
+              </div>
+            ))}
           </div>
         ) : (
           <p>No orders for the current table</p>

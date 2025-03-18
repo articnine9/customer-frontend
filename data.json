@@ -1,60 +1,143 @@
 {
   "_id": {
-    "$oid": "67c58271be60e2bc3beb0694"
+    "$oid": "67d2adba92722acc3af6cb50"
   },
-  "comboName": "COMBO1",
-  "comboPrice": "155",
-  "comboItems": [
+  "tableNumber": {
+    "$numberInt": "7"
+  },
+  "items": [],
+  "combos": [
     {
-      "name": "Chicken Sandwich",
-      "quantity": "1",
-      "type": "Non Veg"
+      "name": "COMBO3",
+      "type": "Veg",
+      "count": {
+        "$numberInt": "1"
+      },
+      "price": {
+        "$numberInt": "165"
+      },
+      "categoryName": "combo",
+      "items": [
+        {
+          "name": "Fanta",
+          "quantity": "5",
+          "type": "Veg"
+        }
+      ],
+      "id": {
+        "$oid": "67d2adba92722acc3af6cb4e"
+      },
+      "status": "Not Served"
     },
     {
-      "name": "Fanta",
-      "quantity": "1",
-      "type": "Veg"
-    }
-  ],
-  "comboType": "Non Veg",
-  "comboCategoryName": "combo",
-  "comboImage": "67c58270be60e2bc3beb0692",
-  "filename": "6253762723221454227 - Copy.jpg",
-  "contentType": "image/jpeg",
-  "uploadDate": {
-    "$date": {
-      "$numberLong": "1740997233033"
-    }
-  },
-  "availability": "available"
-}
-{
-  "_id": {
-    "$oid": "67c582a8be60e2bc3beb0697"
-  },
-  "comboName": "COMBO2",
-  "comboPrice": "250",
-  "comboItems": [
-    {
-      "name": "Fanta",
-      "quantity": "2",
-      "type": "Veg"
+      "name": "COMBO4",
+      "type": "Non Veg",
+      "count": {
+        "$numberInt": "1"
+      },
+      "price": {
+        "$numberInt": "200"
+      },
+      "categoryName": "combo",
+      "items": [
+        {
+          "name": "Chicken Sandwich",
+          "quantity": "3",
+          "type": "Non Veg"
+        },
+        {
+          "name": "Fanta",
+          "quantity": "1",
+          "type": "Non Veg"
+        }
+      ],
+      "id": {
+        "$oid": "67d2adba92722acc3af6cb4f"
+      },
+      "status": "Not Served"
     },
     {
-      "name": "Chicken Sandwich",
-      "quantity": "2",
-      "type": "Non Veg"
-    }
-  ],
-  "comboType": "Non Veg",
-  "comboCategoryName": "combo",
-  "comboImage": "67c582a8be60e2bc3beb0695",
-  "filename": "Shakes.jpg",
-  "contentType": "image/jpeg",
-  "uploadDate": {
-    "$date": {
-      "$numberLong": "1740997288803"
-    }
-  },
-  "availability": "available"
-}
+      "_id": {
+        "$oid": "67d2b20196a24d8031d8de37"
+      },
+      "tableNumber": {
+        "$numberInt": "8"
+      },
+      "items": [],
+      "combos": [
+        {
+          "_id": "67c582d8be60e2bc3beb069a",
+          "name": "COMBO3",
+          "price": "165",
+          "items": [
+            {
+              "name": "Fanta",
+              "quantity": "5",
+              "type": "Veg"
+            }
+          ],
+          "categoryName": "combo",
+          "type": "Veg",
+          "count": {
+            "$numberInt": "1"
+          },
+          "id": {
+            "$oid": "67d2b20196a24d8031d8de34"
+          },
+          "status": "Served"
+        },
+        {
+          "_id": "67c582fabe60e2bc3beb06a1",
+          "name": "COMBO4",
+          "price": "200",
+          "items": [
+            {
+              "name": "Chicken Sandwich",
+              "quantity": "3",
+              "type": "Non Veg"
+            },
+            {
+              "name": "Fanta",
+              "quantity": "1",
+              "type": "Non Veg"
+            }
+          ],
+          "categoryName": "combo",
+          "type": "Non Veg",
+          "count": {
+            "$numberInt": "1"
+          },
+          "id": {
+            "$oid": "67d2b20196a24d8031d8de35"
+          },
+          "status": "Served"
+        },
+        {
+          "_id": "67c68cf68c315174e75a7134",
+          "name": "COMBO5",
+          "price": "355",
+          "items": [
+            {
+              "name": "Chicken Sandwich",
+              "quantity": "2",
+              "type": "Non Veg"
+            },
+            {
+              "name": "Fanta",
+              "quantity": "1",
+              "type": "Veg"
+            }
+          ],
+          "categoryName": "combo",
+          "type": "Non Veg",
+          "count": {
+            "$numberInt": "1"
+          },
+          "id": {
+            "$oid": "67d2b20196a24d8031d8de36"
+          },
+          "status": "Served"
+        }
+      
+    },
+  }
