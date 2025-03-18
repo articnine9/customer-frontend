@@ -7,20 +7,14 @@ import OfflinePayment from "../Customer/Components/CustomerPayment/offlinePaymen
 import OrderStatus from "../Customer/Components/CustomerOrderStatus/orderStatus";
 import PhoneNumberLogin from "../Customer/Components/PhoneNumberLogin/phoneNumberLogin";
 
-
 const AppRoutes = () => (
   <Router>
     <Routes>
-     
-
-   
       <Route path="/" element={<Menu />} />
       <Route path="/addToCart" element={<AddToCart />} />
       <Route path="/payment" element={<OfflinePayment />} />
       <Route path="/orderStatus" element={<OrderStatus />} />
       <Route path="/login" element={<PhoneNumberLogin />} />
-
-     
     </Routes>
   </Router>
 );

@@ -10,7 +10,6 @@ import {
   setCategoryImages,
   setFoodItemImages,
   setUpdatedItems,
-  setOrderedFood,
   setLoading,
   addCombo,
   removeCombo,
@@ -107,9 +106,7 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFoodItems, setFilteredFoodItems] = useState(foodItemImages);
   const [isFixed, setIsFixed] = useState(false);
-
   const [combos, setCombos] = useState([]);
-  const [tablesWithOrders, setTablesWithOrders] = useState(new Set());
   const [load, setLoad] = useState(true);
 
   // Fetch combos from the backend
