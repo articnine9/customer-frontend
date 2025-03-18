@@ -5,7 +5,6 @@ import MenuNavbar from "../CustomerPageNavbar/navBar";
 import Footer from "../CustomerPageFooter/footer"; // Use the correct path to your Footer component
 
 const OrderStatus = () => {
-  const [currentTableOrders, setCurrentTableOrders] = useState([]);
   const [allItemsFromFiltered, setAllItemsFromFiltered] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -31,16 +30,9 @@ const OrderStatus = () => {
             ...item.combos,
           ]);
 
-          if (filteredItems.length > 0) {
-            setCurrentTableOrders(filteredItems[0].items);
-          } else {
-            setCurrentTableOrders([]);
-          }
-
           setAllItemsFromFiltered(itemsFromFiltered);
           console.log("Items from filtered: ", itemsFromFiltered);
         } else {
-          setCurrentTableOrders([]);
           setAllItemsFromFiltered([]);
         }
       } catch (error) {
