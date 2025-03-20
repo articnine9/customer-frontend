@@ -549,7 +549,7 @@ const Menu = () => {
                                       <strong>Items:</strong>{" "}
                                       {combo.comboItems.map((item, idx) => (
                                         <span key={idx}>
-                                          {item.name}
+                                          {item.name} - {item.quantity}
                                           {idx < combo.comboItems.length - 1 &&
                                             ", "}
                                         </span>

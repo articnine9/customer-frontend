@@ -8,7 +8,6 @@ import Modal from "react-modal";
 import MenuNavbar from "../CustomerPageNavbar/navBar";
 import { SiTicktick } from "react-icons/si";
 
-// Set the app element for accessibility
 Modal.setAppElement("#root");
 
 const AddToCart = () => {

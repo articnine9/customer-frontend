@@ -31,7 +31,7 @@ const OrderStatus = () => {
           ]);
 
           setAllItemsFromFiltered(itemsFromFiltered);
-          console.log("Items from filtered: ", itemsFromFiltered);
+          // console.log("Items from filtered: ", itemsFromFiltered) ;
         } else {
           setAllItemsFromFiltered([]);
         }
