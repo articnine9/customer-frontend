@@ -14,7 +14,7 @@ const OrderStatus = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       setLoading(true);
-      try {
+      try {  
         const response = await axios.get(
           "https://qr-backend-application.onrender.com/cart/items"
         );
